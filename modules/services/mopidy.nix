@@ -8,6 +8,19 @@ let
 
   cfg = config.services.mopidy;
 
+  settingsType = with types;
+    attrsOf (oneOf [ bool int str (listOf (oneOf [ int str ])) ]);
+
+  mopidyToINI = generators.toINI {
+    mkKeyValue = generators.mkKeyValueDefault {
+      mkValueString = v:
+        if isList v then
+          concatStringsSep "," v
+        else
+          generators.mkValueStringDefault { } v;
+    } " = ";
+  };
+
 in {
 
   ###### interface
@@ -16,7 +29,47 @@ in {
 
     services.mopidy = {
 
-      # FIXME: Rewrite the whole thing to use the INI generator
+      settings = mkOption {
+        type = types.attrsOf settingsType;
+        default = { };
+        description = ''
+          Mopidy configuration, including extensions. Documented in more detail
+          in the
+          <link xlink:href="https://docs.mopidy.com/en/latest/config/">mopidy
+          configuration documentation</link>.
+        '';
+        example = literalExample ''
+          {
+            core = {
+              cache_dir = "$XDG_CACHE_DIR/mopidy";
+              config_dir = "$XDG_CACHE_DIR/mopidy";
+              data_dir = "$XDG_CACHE_DIR/mopidy";
+              max_tracklist_length = 10000;
+              restore_state = false;
+            };
+            logging = {
+              verbosity = 0;
+              format = "%(levelname)-8s %(asctime)s [%(process)d:%(threadName)s] %(name)s\n  %(message)s";
+              color = true;
+            };
+            audio = {
+              mixer = "software";
+              mixer_volume = 50;
+              output = "autoaudiosink";
+            };
+            local = {
+              enabled = true;
+              media_dir = "$HOME/music/";
+              max_search_results = 100;
+              scan_timeout = 200;
+              scan_follow_symlinks = true;
+              included_file_extensions = [".flac" ".mp3" ".ogg"];
+              user_artist_sortname = true;
+            };
+          };
+        '';
+      };
+
       enable = mkOption {
         type = types.bool;
         default = false;
@@ -25,92 +78,38 @@ in {
         '';
       };
 
-     musicDirectory = mkOption {
-        type = types.path;
-        default = "${config.home.homeDirectory}/music";
-        defaultText = "$HOME/music";
-        apply = toString;       # Prevent copies to Nix store.
-        description = ''
-          The directory where mopidy reads music from.
-        '';
+      package = mkOption {
+        type = types.package;
+        default = pkgs.mopidy;
+        defaultText = literalExample "pkgs.mopidy";
+        description = "Package providing mopidy";
       };
 
-      playlistDirectory = mkOption {
-        type = types.path;
-        default = "${cfg.dataDir}/playlists";
-        defaultText = ''''${dataDir}/playlists'';
-        apply = toString;       # Prevent copies to Nix store.
-        description = ''
-          The directory where mopidy stores playlists.
+      extensions = mkOption {
+        type = types.listOf types.package;
+        default = [ ];
+        example = literalExample ''
+          [ pkgs.mopidy-local pkgs.mopidy-somafm pkgs.mopidy-mpd ]
         '';
-      };
-
-      extraConfig = mkOption {
-        type = types.lines;
-        default = "";
-        description = ''
-          Extra directives added to to the end of mopidy's configuration
-          file, <filename>mopidy.conf</filename>. Basic configuration
-          like file location and uid/gid is added automatically to the
-          beginning of the file. For available options see
-          <citerefentry>
-            <refentrytitle>mopidy.conf</refentrytitle>
-            <manvolnum>5</manvolnum>
-          </citerefentry>.
-        '';
-      };
-
-      dataDir = mkOption {
-        type = types.path;
-        default = "${config.xdg.dataHome}/${name}";
-        defaultText = "$XDG_DATA_HOME/mopidy";
-        apply = toString;       # Prevent copies to Nix store.
-        description = ''
-          The directory where mopidy stores its state, tag cache,
-          playlists etc.
-        '';
-      };
-
-     network = {
-
-        listenAddress = mkOption {
-          type = types.str;
-          default = "127.0.0.1";
-          example = "any";
-          description = ''
-            The address for the daemon to listen on.
-            Use <literal>any</literal> to listen on all addresses.
-          '';
-        };
-
-        port = mkOption {
-          type = types.port;
-          default = 6600;
-          description = ''
-            The TCP port on which the the daemon will listen.
-          '';
-        };
-
-      };
-
-      dbFile = mkOption {
-        type = types.nullOr types.str;
-        default = "${cfg.dataDir}/tag_cache";
-        defaultText = ''''${dataDir}/tag_cache'';
-        description = ''
-          The path to MPD's database. If set to
-          <literal>null</literal> the parameter is omitted from the
-          configuration.
-        '';
+        description = "List of extensions added to mopidy";
       };
     };
 
   };
 
-
   ###### implementation
 
-  config = mkIf cfg.enable {
+  config = let
+    mopidyExtended = pkgs.symlinkJoin {
+      name = "mopidy-with-modules";
+      paths = [ cfg.package ] ++ cfg.extensions;
+    };
+
+  in mkIf cfg.enable {
+
+    xdg.configFile."mopidy/mopidy.conf".text = mopidyToINI cfg.settings;
+
+    home.packages = [ mopidyExtended ];
 
     systemd.user.services.mopidy = {
       Unit = {
@@ -118,17 +117,13 @@ in {
         Description = "Music Player Daemon";
       };
 
-      Install = {
-        WantedBy = [ "default.target" ];
-      };
+      Install = { WantedBy = [ "default.target" ]; };
 
       Service = {
         Environment = "PATH=${config.home.profileDirectory}/bin";
-        ExecStart = "${pkgs.mopidy}/bin/mopidy --no-daemon ${mopidyConf}";
+        ExecStart = "${mopidyExtended}/bin/mopidy";
         Type = "notify";
-        ExecStartPre = ''${pkgs.bash}/bin/bash -c "${pkgs.coreutils}/bin/mkdir -p '${cfg.dataDir}' '${cfg.playlistDirectory}'"'';
       };
     };
   };
-
 }

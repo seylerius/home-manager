@@ -1,0 +1,12 @@
+[Install]
+WantedBy=default.target
+
+[Service]
+Environment=PATH=/home/hm-user/.nix-profile/bin
+ExecStart=/nix/store/0lagg4d7vk73bjv62h8ycv7hbwppqk4p-mopidy-with-modules/bin/mopidy --no-daemon
+Type=notify
+
+[Unit]
+After=network.target
+After=sound.target
+Description=Music Player Daemon

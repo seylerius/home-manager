@@ -1,14 +1,13 @@
 { pkgs
 
-  # Note, this should be "the standard library" + HM extensions.
+# Note, this should be "the standard library" + HM extensions.
 , lib
 
-  # Whether to enable module type checking.
+# Whether to enable module type checking.
 , check ? true
 
-# If disabled, the pkgs attribute passed to this function is used instead.
-, useNixpkgsModule ? true
-}:
+  # If disabled, the pkgs attribute passed to this function is used instead.
+, useNixpkgsModule ? true }:
 
 with lib;
 
@@ -16,9 +15,7 @@ let
 
   hostPlatform = pkgs.stdenv.hostPlatform;
 
-  loadModule = file: { condition ? true }: {
-    inherit file condition;
-  };
+  loadModule = file: { condition ? true }: { inherit file condition; };
 
   allModules = [
     (loadModule ./accounts/email.nix { })
@@ -75,7 +72,9 @@ let
     (loadModule ./programs/home-manager.nix { })
     (loadModule ./programs/htop.nix { })
     (loadModule ./programs/i3status.nix { })
-    (loadModule ./programs/i3status-rust.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./programs/i3status-rust.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./programs/info.nix { })
     (loadModule ./programs/irssi.nix { })
     (loadModule ./programs/lieer.nix { })
@@ -160,6 +159,7 @@ let
     (loadModule ./services/lorri.nix { condition = hostPlatform.isLinux; })
     (loadModule ./services/mako.nix { condition = hostPlatform.isLinux; })
     (loadModule ./services/mbsync.nix { })
+    (loadModule ./services/mopidy.nix { })
     (loadModule ./services/mpd.nix { })
     (loadModule ./services/mpdris2.nix { condition = hostPlatform.isLinux; })
     (loadModule ./services/muchsync.nix { condition = hostPlatform.isLinux; })
@@ -167,12 +167,16 @@ let
     (loadModule ./services/nextcloud-client.nix { })
     (loadModule ./services/owncloud-client.nix { })
     (loadModule ./services/parcellite.nix { })
-    (loadModule ./services/password-store-sync.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./services/password-store-sync.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./services/pasystray.nix { })
     (loadModule ./services/pbgopy.nix { condition = hostPlatform.isLinux; })
     (loadModule ./services/picom.nix { })
     (loadModule ./services/polybar.nix { })
-    (loadModule ./services/pulseeffects.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./services/pulseeffects.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./services/random-background.nix { })
     (loadModule ./services/redshift.nix { })
     (loadModule ./services/rsibreak.nix { condition = hostPlatform.isLinux; })
@@ -184,23 +188,33 @@ let
     (loadModule ./services/syncthing.nix { })
     (loadModule ./services/taffybar.nix { })
     (loadModule ./services/tahoe-lafs.nix { })
-    (loadModule ./services/taskwarrior-sync.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./services/taskwarrior-sync.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./services/udiskie.nix { })
     (loadModule ./services/unclutter.nix { })
     (loadModule ./services/unison.nix { condition = hostPlatform.isLinux; })
     (loadModule ./services/window-managers/awesome.nix { })
-    (loadModule ./services/window-managers/bspwm/default.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./services/window-managers/bspwm/default.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./services/window-managers/i3-sway/i3.nix { })
-    (loadModule ./services/window-managers/i3-sway/sway.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./services/window-managers/i3-sway/sway.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./services/window-managers/xmonad.nix { })
     (loadModule ./services/wlsunset.nix { condition = hostPlatform.isLinux; })
     (loadModule ./services/xcape.nix { condition = hostPlatform.isLinux; })
-    (loadModule ./services/xembed-sni-proxy.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./services/xembed-sni-proxy.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./services/xscreensaver.nix { })
     (loadModule ./services/xsuspender.nix { condition = hostPlatform.isLinux; })
     (loadModule ./systemd.nix { })
     (loadModule ./targets/darwin.nix { condition = hostPlatform.isDarwin; })
-    (loadModule ./targets/generic-linux.nix { condition = hostPlatform.isLinux; })
+    (loadModule ./targets/generic-linux.nix {
+      condition = hostPlatform.isLinux;
+    })
     (loadModule ./xcursor.nix { })
     (loadModule ./xresources.nix { })
     (loadModule ./xsession.nix { })
@@ -213,8 +227,8 @@ let
   pkgsModule = { config, ... }: {
     config = {
       _module.args.baseModules = modules;
-      _module.args.pkgsPath = lib.mkDefault (
-        if versionAtLeast config.home.stateVersion "20.09" then
+      _module.args.pkgsPath = lib.mkDefault
+        (if versionAtLeast config.home.stateVersion "20.09" then
           pkgs.path
         else
           <nixpkgs>);
@@ -226,6 +240,4 @@ let
     };
   };
 
-in
-
-  modules ++ [ pkgsModule ]
+in modules ++ [ pkgsModule ]
