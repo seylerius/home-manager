@@ -1401,6 +1401,9 @@ works both internally and externally.
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-pam.sessionVariables"></a><a class="term" href="options.html#opt-pam.sessionVariables"><code class="option">pam.sessionVariables</code></a></span></dt><dd><p>Environment variables that will be set for the PAM session.
 The variable values must be as described in
 <span class="citerefentry"><span class="refentrytitle">pam_env.conf</span>(5)</span>.
+</p><p>
+Note, this option will become deprecated in the future and its use is
+therefore discouraged.
 </p><p><span class="emphasis"><em>Type:</em></span> attribute set</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         
         {
@@ -2112,6 +2115,10 @@ Can be used to specify extensions.
         true
       </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/broot.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/broot.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.broot.package"></a><a class="term" href="options.html#opt-programs.broot.package"><code class="option">programs.broot.package</code></a></span></dt><dd><p>Package providing broot</p><p><span class="emphasis"><em>Type:</em></span> package</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        pkgs.broot
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/broot.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/broot.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.broot.skin"></a><a class="term" href="options.html#opt-programs.broot.skin"><code class="option">programs.broot.skin</code></a></span></dt><dd><p>Color configuration.
 </p><p>
 Complete list of keys (expected to change before the v1 of broot):
@@ -2221,19 +2228,51 @@ The possible attributes are:
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.chromium.extensions"></a><a class="term" href="options.html#opt-programs.chromium.extensions"><code class="option">programs.chromium.extensions</code></a></span></dt><dd><p>List of Chromium extensions to install.
 To find the extension ID, check its URL on the
 <a class="link" href="https://chrome.google.com/webstore/category/extensions" target="_top">Chrome Web Store</a>.
-</p><p><span class="emphasis"><em>Type:</em></span> list of strings</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+</p><p>
+To install extensions outside of the Chrome Web Store set
+<code class="literal">updateUrl</code> or <code class="literal">crxPath</code> and
+<code class="literal">version</code> as explained in the
+<a class="link" href="https://developer.chrome.com/docs/extensions/mv2/external_extensions" target="_top">Chrome
+documentation</a>.
+</p><p><span class="emphasis"><em>Type:</em></span> list of submodule or string convertible to its</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         
         [
         
         ]
     
       </code></p><p><span class="emphasis"><em>Example:</em></span> </p><pre class="programlisting">[
-  "chlffgpmiacpedhhbkiomidkjlcfhogd" # pushbullet
-  "mbniclmhobmnbdlbpiphghaielnnpgdp" # lightshot
-  "gcbommkclmclpchllfjekcdonpmejbdp" # https everywhere
-  "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock origin
+  { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # ublock origin
+  {
+    id = "dcpihecpambacapedldabdbpakmachpb";
+    updateUrl = "https://raw.githubusercontent.com/iamadamdev/bypass-paywalls-chrome/master/updates.xml";
+  }
+  {
+    id = "aaaaaaaaaabbbbbbbbbbcccccccccc";
+    crxPath = "/home/share/extension.crx";
+    version = "1.0";
+  }
 ]
 </pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/chromium.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.chromium.extensions._.crxPath"></a><a class="term" href="options.html#opt-programs.chromium.extensions._.crxPath"><code class="option">programs.chromium.extensions.*.crxPath</code></a></span></dt><dd><p>Path to the extension's crx file. Linux only.
+</p><p><span class="emphasis"><em>Type:</em></span> null or path</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        null
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/chromium.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.chromium.extensions._.id"></a><a class="term" href="options.html#opt-programs.chromium.extensions._.id"><code class="option">programs.chromium.extensions.*.id</code></a></span></dt><dd><p>The extension's ID from the Chome Web Store url or the unpacked crx.
+</p><p><span class="emphasis"><em>Type:</em></span> string matching the pattern [a-zA-Z]{32}</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        ""
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/chromium.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.chromium.extensions._.updateUrl"></a><a class="term" href="options.html#opt-programs.chromium.extensions._.updateUrl"><code class="option">programs.chromium.extensions.*.updateUrl</code></a></span></dt><dd><p>URL of the extension's update manifest XML file. Linux only.
+</p><p><span class="emphasis"><em>Type:</em></span> string</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        "https://clients2.google.com/service/update2/crx"
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/chromium.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.chromium.extensions._.version"></a><a class="term" href="options.html#opt-programs.chromium.extensions._.version"><code class="option">programs.chromium.extensions.*.version</code></a></span></dt><dd><p>The extension's version, required for local installation. Linux only.
+</p><p><span class="emphasis"><em>Type:</em></span> null or string</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        null
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/chromium.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.command-not-found.enable"></a><a class="term" href="options.html#opt-programs.command-not-found.enable"><code class="option">programs.command-not-found.enable</code></a></span></dt><dd><p>Whether to enable command-not-found hook for interactive shell.</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         false
@@ -3043,6 +3082,10 @@ every time a new commit is checked out on your repository.
 terminal to make text boldface.
 </p><p><span class="emphasis"><em>Type:</em></span> null or boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         null
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/gnome-terminal.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/gnome-terminal.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.gnome-terminal.profile._name_.audibleBell"></a><a class="term" href="options.html#opt-programs.gnome-terminal.profile._name_.audibleBell"><code class="option">programs.gnome-terminal.profile.&lt;name&gt;.audibleBell</code></a></span></dt><dd><p>Turn on/off the terminal's bell.</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        true
       </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/gnome-terminal.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/gnome-terminal.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.gnome-terminal.profile._name_.backspaceBinding"></a><a class="term" href="options.html#opt-programs.gnome-terminal.profile._name_.backspaceBinding"><code class="option">programs.gnome-terminal.profile.&lt;name&gt;.backspaceBinding</code></a></span></dt><dd><p>Which string the terminal should send to an application when the user
@@ -4508,6 +4551,12 @@ timeout, set it to zero.
         0
       </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/services/mako.nix#blob-path" target="_top">
                     &lt;home-manager/modules/services/mako.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.mako.extraConfig"></a><a class="term" href="options.html#opt-programs.mako.extraConfig"><code class="option">programs.mako.extraConfig</code></a></span></dt><dd><p>Additional configuration.</p><p><span class="emphasis"><em>Type:</em></span> strings concatenated with "\n"</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        ""
+      </code></p><p><span class="emphasis"><em>Example:</em></span> </p><pre class="programlisting">[urgency=low]
+border-color=#b8bb26
+</pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/services/mako.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/services/mako.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.mako.font"></a><a class="term" href="options.html#opt-programs.mako.font"><code class="option">programs.mako.font</code></a></span></dt><dd><p>Font to use, in Pango format.
 </p><p><span class="emphasis"><em>Type:</em></span> null or string</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         "monospace 10"
@@ -4734,6 +4783,11 @@ control the default matplotlib behavior.
         true
       </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/mcfly.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/mcfly.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.mcfly.enableFuzzySearch"></a><a class="term" href="options.html#opt-programs.mcfly.enableFuzzySearch"><code class="option">programs.mcfly.enableFuzzySearch</code></a></span></dt><dd><p>Whether to enable fuzzy searching.
+</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        false
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/mcfly.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/mcfly.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.mcfly.enableLightTheme"></a><a class="term" href="options.html#opt-programs.mcfly.enableLightTheme"><code class="option">programs.mcfly.enableLightTheme</code></a></span></dt><dd><p>Whether to enable light mode theme.
 </p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         false
@@ -4850,6 +4904,22 @@ for the full list of options.
   cache-default = 4000000;
 }
 </pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/mpv.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/mpv.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.mpv.defaultProfiles"></a><a class="term" href="options.html#opt-programs.mpv.defaultProfiles"><code class="option">programs.mpv.defaultProfiles</code></a></span></dt><dd><p>Profiles to be applied by default. Options set by them are overridden
+by options set in <a class="xref" href="options.html#opt-programs.mpv.config"><code class="option">programs.mpv.config</code></a>.
+</p><p><span class="emphasis"><em>Type:</em></span> list of strings</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        
+        [
+        
+        ]
+    
+      </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
+        
+        [
+        "gpu-hq" 
+        ]
+    
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/mpv.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/mpv.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.mpv.profiles"></a><a class="term" href="options.html#opt-programs.mpv.profiles"><code class="option">programs.mpv.profiles</code></a></span></dt><dd><p>Sub-configuration options for specific profiles written to
 <code class="filename">~/.config/mpv/mpv.conf</code>. See
@@ -5475,7 +5545,7 @@ exclusion.
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.nushell.settings"></a><a class="term" href="options.html#opt-programs.nushell.settings"><code class="option">programs.nushell.settings</code></a></span></dt><dd><p>Configuration written to
 <code class="filename">~/.config/nushell/config.toml</code>.
 </p><p>
-See <a class="link" href="https://www.nushell.sh/book/en/configuration.html" target="_top">https://www.nushell.sh/book/en/configuration.html</a> for the full list
+See <a class="link" href="https://www.nushell.sh/book/configuration.html" target="_top">https://www.nushell.sh/book/configuration.html</a> for the full list
 of options.
 </p><p><span class="emphasis"><em>Type:</em></span> Nushell configuration</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         
@@ -5506,6 +5576,24 @@ of options.
     
       </code></p><p><span class="emphasis"><em>Example:</em></span> </p><pre class="programlisting">[ pkgs.obs-linuxbrowser ]</pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/obs-studio.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/obs-studio.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.octant.enable"></a><a class="term" href="options.html#opt-programs.octant.enable"><code class="option">programs.octant.enable</code></a></span></dt><dd><p>Whether to enable octant.</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        false
+      </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
+        true
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/octant.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/octant.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.octant.package"></a><a class="term" href="options.html#opt-programs.octant.package"><code class="option">programs.octant.package</code></a></span></dt><dd><p>The Octant package to use.</p><p><span class="emphasis"><em>Type:</em></span> package</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        pkgs.octant
+      </code></p><p><span class="emphasis"><em>Example:</em></span> </p><pre class="programlisting">pkgs.octant-other</pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/octant.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/octant.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.octant.plugins"></a><a class="term" href="options.html#opt-programs.octant.plugins"><code class="option">programs.octant.plugins</code></a></span></dt><dd><p>Optional Octant plugins.</p><p><span class="emphasis"><em>Type:</em></span> list of packages</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        
+        [
+        
+        ]
+    
+      </code></p><p><span class="emphasis"><em>Example:</em></span> </p><pre class="programlisting">[ pkgs.starboard-octant-plugin ]</pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/octant.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/octant.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.offlineimap.enable"></a><a class="term" href="options.html#opt-programs.offlineimap.enable"><code class="option">programs.offlineimap.enable</code></a></span></dt><dd><p>Whether to enable OfflineIMAP.</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         false
       </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
@@ -6656,9 +6744,17 @@ of options.
     
       </code></p><p><span class="emphasis"><em>Example:</em></span> </p><pre class="programlisting">{
   add_newline = false;
-  prompt_order = [ "line_break" "package" "line_break" "character" ];
+  format = lib.concatStrings [
+    "$line_break"
+    "$package"
+    "$line_break"
+    "$character"
+  ];
   scan_timeout = 10;
-  character.symbol = "➜";
+  character = {
+    success_symbol = "➜";
+    error_symbol = "➜";
+  };
 }
 </pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/starship.nix&gt;
@@ -7052,6 +7148,13 @@ run at the top of your configuration.
 ]
 </pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/tmux.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/tmux.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.tmux.prefix"></a><a class="term" href="options.html#opt-programs.tmux.prefix"><code class="option">programs.tmux.prefix</code></a></span></dt><dd><p>Set the prefix key. Overrules the "shortcut" option when set.
+</p><p><span class="emphasis"><em>Type:</em></span> null or string</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        null
+      </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
+        "C-a"
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/tmux.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/programs/tmux.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.tmux.resizeAmount"></a><a class="term" href="options.html#opt-programs.tmux.resizeAmount"><code class="option">programs.tmux.resizeAmount</code></a></span></dt><dd><p>Number of lines/columns when resizing.</p><p><span class="emphasis"><em>Type:</em></span> positive integer, meaning &gt;0</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         5
       </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
@@ -7272,7 +7375,7 @@ manually set any options not listed above.
                     &lt;home-manager/modules/programs/vscode.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.vscode.package"></a><a class="term" href="options.html#opt-programs.vscode.package"><code class="option">programs.vscode.package</code></a></span></dt><dd><p>Version of Visual Studio Code to install.
 </p><p><span class="emphasis"><em>Type:</em></span> package</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
-        <em class="replaceable"><code>(build of vscode-1.51.1)</code></em>
+        <em class="replaceable"><code>(build of vscode-1.52.1)</code></em>
       </code></p><p><span class="emphasis"><em>Example:</em></span> </p><pre class="programlisting">pkgs.vscodium</pre><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/programs/vscode.nix#blob-path" target="_top">
                     &lt;home-manager/modules/programs/vscode.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-programs.vscode.extensions"></a><a class="term" href="options.html#opt-programs.vscode.extensions"><code class="option">programs.vscode.extensions</code></a></span></dt><dd><p>The extensions Visual Studio Code should be started with.
@@ -9554,6 +9657,18 @@ man page for more examples.
         false
       </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/services/picom.nix#blob-path" target="_top">
                     &lt;home-manager/modules/services/picom.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-services.plan9port.fontsrv.enable"></a><a class="term" href="options.html#opt-services.plan9port.fontsrv.enable"><code class="option">services.plan9port.fontsrv.enable</code></a></span></dt><dd><p>Whether to enable the Plan 9 file system access to host fonts.</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        false
+      </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
+        true
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/services/plan9port.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/services/plan9port.nix&gt;
+                </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-services.plan9port.plumber.enable"></a><a class="term" href="options.html#opt-services.plan9port.plumber.enable"><code class="option">services.plan9port.plumber.enable</code></a></span></dt><dd><p>Whether to enable the Plan 9 file system for interprocess messaging.</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
+        false
+      </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
+        true
+      </code></p><p><span class="emphasis"><em>Declared by:</em></span></p><table border="0" summary="Simple list" class="simplelist"><tr><td><code class="filename"><a class="filename" href="https://github.com/nix-community/home-manager/blob/master/modules/services/plan9port.nix#blob-path" target="_top">
+                    &lt;home-manager/modules/services/plan9port.nix&gt;
                 </a></code></td></tr></table></dd><dt><span class="term"><a id="opt-services.polybar.enable"></a><a class="term" href="options.html#opt-services.polybar.enable"><code class="option">services.polybar.enable</code></a></span></dt><dd><p>Whether to enable Polybar status bar.</p><p><span class="emphasis"><em>Type:</em></span> boolean</p><p><span class="emphasis"><em>Default:</em></span> <code class="literal">
         false
       </code></p><p><span class="emphasis"><em>Example:</em></span> <code class="literal">
